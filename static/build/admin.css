@@ -1,7 +1,7 @@
-.netlify-deploybot-change-count {
+.netlify-deploybot .change-count {
   font-style: italic; }
 
-.netlify-deploybot-deployer {
+.netlify-deploybot .deployer {
   cursor: pointer;
   -webkit-appearance: none;
      -moz-appearance: none;
@@ -17,16 +17,32 @@
   font-weight: bold;
   -webkit-transition: all 0.2s;
   transition: all 0.2s; }
-  .netlify-deploybot-deployer:hover {
+  .netlify-deploybot .deployer:not(:disabled):hover {
     background-color: #00cc66; }
-  .netlify-deploybot-deployer:active {
+  .netlify-deploybot .deployer:not(:disabled):active {
     background-color: #008040; }
+  .netlify-deploybot .deployer:disabled {
+    cursor: default;
+    background-color: #ccc; }
 
-/* actions */
+.netlify-deploybot .unsaved-build-hook {
+  display: block;
+  margin-top: 1em;
+  color: #c00; }
+
+.netlify-deploybot .deploy-message {
+  margin-left: 20px; }
+  .netlify-deploybot .deploy-message--error {
+    color: #c00; }
+  .netlify-deploybot .deploy-message--success {
+    color: #008040;
+    font-weight: bold; }
+
 .netlify-deploybot-loader {
   position: relative;
   display: inline-block;
-  margin-left: 20px; }
+  margin-left: 20px;
+  opacity: 0; }
   .netlify-deploybot-loader, .netlify-deploybot-loader::before, .netlify-deploybot-loader::after {
     width: 8px;
     height: 8px;
@@ -40,6 +56,35 @@
   .netlify-deploybot-loader::before {
     left: 14px; }
   .netlify-deploybot-loader::after {
-    left: 28px; }
+    left: 28px;
+    -webkit-animation-delay: 0.8s;
+            animation-delay: 0.8s; }
+  .netlify-deploybot--loading .netlify-deploybot-loader,
+  .netlify-deploybot--loading .netlify-deploybot-loader::before,
+  .netlify-deploybot--loading .netlify-deploybot-loader::after {
+    -webkit-animation: 1.2s infinite alternate loading;
+            animation: 1.2s infinite alternate loading; }
+  .netlify-deploybot--loading .netlify-deploybot-loader::before {
+    -webkit-animation-delay: 0.4s;
+            animation-delay: 0.4s; }
+  .netlify-deploybot--loading .netlify-deploybot-loader::after {
+    -webkit-animation-delay: 0.8s;
+            animation-delay: 0.8s; }
+  .netlify-deploybot--loading .netlify-deploybot-loader {
+    -webkit-transition: opacity 1s;
+    transition: opacity 1s;
+    opacity: 1; }
+
+@-webkit-keyframes loading {
+  from {
+    background-color: #aaa; }
+  to {
+    background-color: #f1f1f1; } }
+
+@keyframes loading {
+  from {
+    background-color: #aaa; }
+  to {
+    background-color: #f1f1f1; } }
 
 /*# sourceMappingURL=admin.css.map */

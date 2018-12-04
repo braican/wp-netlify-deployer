@@ -34,15 +34,7 @@ class Admin {
      * 
      * @var string
      */
-    private $option_group = 'deploybot_settings';
-
-
-    /**
-     * Checks to see if the admin has been loaded already.
-     * 
-     * @var boolean
-     */
-    private $loaded = false;
+    public $option_group = 'deploybot_settings';
 
 
     /**
@@ -59,9 +51,13 @@ class Admin {
     }
 
     /**
-     * This is empty to prevent anything but a singleton.
+     * This is private.
      */
-    private function __construct() {}
+    private function __construct() {
+        if (!defined('DOING_AJAX') || !DOING_AJAX) {
+            $this->trigger_hooks();
+        }
+    }
 
 
     /**
@@ -69,9 +65,12 @@ class Admin {
      * 
      * @return void
      */
-    public function trigger_hooks() {
+    private function trigger_hooks() {
+        // Enqueue.
         add_action('admin_enqueue_scripts', array($this, 'admin_styles'));
         add_action('admin_enqueue_scripts', array($this, 'admin_scripts'));
+
+        // Build the options page.
         add_action('admin_menu', array($this, 'setup_menu_page'));
         add_action('admin_init', array($this, 'setup_menu_settings'));
         add_action('save_post', array($this, 'increment_saves_since_deploy'));
@@ -84,7 +83,7 @@ class Admin {
      * @return void
      */
     public function admin_styles() {
-        wp_enqueue_style('netlify-deploybot-admin-styles', NETLIFY_DEPLOYBOT_DIRECTORY_URI . 'static/css/admin.css');
+        wp_enqueue_style('netlify-deploybot-admin-styles', NETLIFY_DEPLOYBOT_DIRECTORY_URI . 'static/build/admin.css');
     }
 
 
@@ -94,7 +93,7 @@ class Admin {
      * @return void
      */
     public function admin_scripts() {
-        wp_enqueue_script( 'netlify-deploybot-admin-scripts', NETLIFY_DEPLOYBOT_DIRECTORY_URI . 'static/js/deployer.js', array('jquery'), '1.0' );
+        wp_enqueue_script( 'netlify-deploybot-admin-scripts', NETLIFY_DEPLOYBOT_DIRECTORY_URI . 'static/build/deployer.js', array('jquery'), '1.0' );
     }
 
 
@@ -171,21 +170,6 @@ class Admin {
     }
 
 
-    // -------------------------------------------------
-    //
-    // Getters
-    //
-    // -------------------------------------------------
-
-    /**
-     * Returns the loaded status of the admin.
-     * 
-     * @return boolean
-     */
-    public function is_loaded() {
-        return $this->loaded;
-    }
-
 
     // -------------------------------------------------
     //
@@ -202,12 +186,12 @@ class Admin {
     ?>
         <div class="wrap">
             <h1 class="wp-heading-inline">Netlify Deploybot</h1>
-	        <form action="options.php" method="post">
+	        <form action="options.php" method="post" class="netlify-deploybot">
 	        <?php
                 settings_errors();
                 settings_fields($this->option_group);
                 do_settings_sections($this->menu_page_slug);
-	            submit_button(); 
+	            submit_button('Save Build Hook');
 	        ?>          
 	        </form>
 		</div>
@@ -231,17 +215,17 @@ class Admin {
     public function build_hook_url_markup() {
         $options = get_option($this->option_group);
         $value = $options['build_hook_url'] ?? '';
-        $saves = isset($options['changes']) && $options['changes'] > 0 ? "<p class='netlify-deploybot-change-count'>{$options['changes']} saves since last deployment.</p>" : '';
-        $deploy_button = $value ? '<button class="js-deployer netlify-deploybot-deployer">Deploy</button><span class="netlify-deploybot-loader"></span>' : '';
+        $saves = isset($options['changes']) && $options['changes'] > 0 ? "<p class='change-count'>{$options['changes']} saves since last deployment.</p>" : '';
+        $deploy_button = $value ? '<button class="js-deployer deployer">Deploy</button><span class="netlify-deploybot-loader"></span>' : '';
 
         $deploy_actions = sprintf(
-            '<div class="netlify-deploybot-actions">%s%s</div>',
+            '<div>%s%s</div>',
             $saves,
             $deploy_button
         );
 
         echo sprintf(
-            '<div><input type="url" class="regular-text" name="%1$s[%2$s]" id="%2$s" value="%3$s">%4$s</div>',
+            '<div class="js-netlify-deploybot-actions"><input type="url" class="regular-text" name="%1$s[%2$s]" id="%2$s" value="%3$s">%4$s</div>',
             $this->option_group,
             'build_hook_url',
             $value,

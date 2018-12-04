@@ -105,12 +105,16 @@ class NetlifyDeploybot {
         
         $this->plugin_name = 'netlify-deploybot';
 
-        $this->set_admin_hooks();
+        $this->setup_admin();
+        $this->setup_deployer();
     }
 
-    private function set_admin_hooks() {
-        $Admin = Admin::get_instance();
-        $Admin->trigger_hooks();
+    private function setup_admin() {
+        $admin = Admin::get_instance();
+    }
+
+    private function setup_deployer() {
+        $deployer = Deployer::get_instance();
     }
 }
 
@@ -125,3 +129,4 @@ function init() {
     $NetlifyDeploybot = NetlifyDeploybot::get_instance();
 }
 add_action('plugins_loaded', 'NetlifyDeploybot\init');
+
