@@ -26,15 +26,36 @@ namespace NetlifyDeploybot;
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) die;
 
-/**
- * Plugin version.
- */
+
+// -------------------------------------------------
+//
+// Constants
+//
+// -------------------------------------------------
+
+// Define the plugin version
 define('NETLIFY_DEPLOYBOT_VERSION', '0.0.1');
+
+// Plugin directory uri
+define('NETLIFY_DEPLOYBOT_DIRECTORY_URI', plugin_dir_url(__FILE__));
+
+
+// -------------------------------------------------
+//
+// Loader
+//
+// -------------------------------------------------
 
 // Load the autoloader.
 include_once plugin_dir_path(__FILE__) . 'lib/autoloader.php';
 
+
+// -------------------------------------------------
+//
 // Main class
+//
+// -------------------------------------------------
+
 class NetlifyDeploybot {
 
     /**
@@ -93,9 +114,14 @@ class NetlifyDeploybot {
     }
 }
 
-/**
- * Init the plugin.
- * 
- * @return void
- */
-add_action('plugins_loaded', array('NetlifyDeploybot\NetlifyDeploybot', 'get_instance'));
+
+// -------------------------------------------------
+//
+// Init
+//
+// -------------------------------------------------
+
+function init() {
+    $NetlifyDeploybot = NetlifyDeploybot::get_instance();
+}
+add_action('plugins_loaded', 'NetlifyDeploybot\init');

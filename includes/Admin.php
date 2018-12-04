@@ -70,11 +70,32 @@ class Admin {
      * @return void
      */
     public function trigger_hooks() {
+        add_action('admin_enqueue_scripts', array($this, 'admin_styles'));
+        add_action('admin_enqueue_scripts', array($this, 'admin_scripts'));
         add_action('admin_menu', array($this, 'setup_menu_page'));
         add_action('admin_init', array($this, 'setup_menu_settings'));
         add_action('save_post', array($this, 'increment_saves_since_deploy'));
     }
 
+
+    /**
+     * Add stylesheets to the admin.
+     * 
+     * @return void
+     */
+    public function admin_styles() {
+        wp_enqueue_style('netlify-deploybot-admin-styles', NETLIFY_DEPLOYBOT_DIRECTORY_URI . 'static/css/admin.css');
+    }
+
+
+    /**
+     * Add scripts to the admin.
+     * 
+     * @return void
+     */
+    public function admin_scripts() {
+        wp_enqueue_script( 'netlify-deploybot-admin-scripts', NETLIFY_DEPLOYBOT_DIRECTORY_URI . 'static/js/deployer.js', array('jquery'), '1.0' );
+    }
 
 
     /**
@@ -147,8 +168,6 @@ class Admin {
             
             update_option($this->option_group, $options);
         }
-
-        error_log(print_r(get_option($this->option_group), true));
     }
 
 
@@ -212,13 +231,11 @@ class Admin {
     public function build_hook_url_markup() {
         $options = get_option($this->option_group);
         $value = $options['build_hook_url'] ?? '';
-        $saves = isset($options['changes']) && $options['changes'] > 0 ? "{$options['changes']} saves since last deployment." : '';
-        $deploy_button = $value ? '<button>Deploy</button>' : '';
-        
-        error_log(print_r($options, true));
+        $saves = isset($options['changes']) && $options['changes'] > 0 ? "<p class='netlify-deploybot-change-count'>{$options['changes']} saves since last deployment.</p>" : '';
+        $deploy_button = $value ? '<button class="js-deployer netlify-deploybot-deployer">Deploy</button><span class="netlify-deploybot-loader"></span>' : '';
 
         $deploy_actions = sprintf(
-            '<div>%s%s</div>',
+            '<div class="netlify-deploybot-actions">%s%s</div>',
             $saves,
             $deploy_button
         );

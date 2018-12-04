@@ -1,0 +1,56 @@
+.netlify-deploybot-change-count {
+  font-style: italic;
+}
+
+.netlify-deploybot-deployer {
+  cursor: pointer;
+  appearance: none;
+  border: 0;
+  border-radius: 4px;
+  padding: 8px 18px;
+  margin-top: 1em;
+  border-width: 1px;
+  border-style: solid;
+  background-color: #00b359;
+  color: #fff;
+  font-weight: bold;
+  transition: all .2s;
+}
+.netlify-deploybot-deployer:hover {
+  background-color: #00cc66;
+}
+.netlify-deploybot-deployer:active {
+  background-color: #008040;
+}
+
+/* actions */
+.netlify-deploybot-loader,
+.netlify-deploybot-loader::before,
+.netlify-deploybot-loader::after {
+  width: 8px;
+  height: 8px;
+  background-color: #aaa;
+  border-radius: 50%;
+}
+.netlify-deploybot-loader::before,
+.netlify-deploybot-loader::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+}
+
+.netlify-deploybot-loader {
+  position: relative;
+  display: inline-block;
+  margin-left: 20px;
+}
+.netlify-deploybot-loader::before {
+  left: 14px;
+}
+.netlify-deploybot-loader::after {
+  left: 28px;
+}
+.netlify-deploybot--loading .netlify-deploybot-loader {
+
+}
