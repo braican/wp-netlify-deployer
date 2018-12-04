@@ -98,7 +98,4 @@ class NetlifyDeploybot {
  * 
  * @return void
  */
-function run() {
-    $netlify_deploybot = NetlifyDeploybot::get_instance();
-}
-run();
+add_action('plugins_loaded', array('NetlifyDeploybot\NetlifyDeploybot', 'get_instance'));

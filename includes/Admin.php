@@ -28,22 +28,23 @@ class Admin {
      */
     private $menu_page_slug = 'deploybot-settings';
 
-    /**
-     * The name of the settings group.
-     * 
-     * @var string
-     */
-    private $option_group = 'deploybot';
-
 
     /**
      * The name of the settings section.
      * 
      * @var string
      */
-    private $settings_section = 'deploybot_settings';
+    private $option_group = 'deploybot_settings';
 
-    
+
+    /**
+     * Checks to see if the admin has been loaded already.
+     * 
+     * @var boolean
+     */
+    private $loaded = false;
+
+
     /**
      * Gets the instance of the class.
      * 
@@ -96,8 +97,12 @@ class Admin {
      * @return void
      */
     public function setup_menu_settings() {
+        register_setting($this->option_group, $this->option_group, array(
+            'sanitize_callback' => array($this, 'validate_settings')
+        ));
+
         add_settings_section(
-            $this->settings_section,
+            $this->option_group,
             'Deploybot Settings',
             array($this, 'settings_markup'),
             $this->menu_page_slug
@@ -106,12 +111,29 @@ class Admin {
         add_settings_field(
             'build_hook_url',
             'Build Hook',
-            array($this, 'build_hook_markup'),
+            array($this, 'field_markup'),
             $this->menu_page_slug,
-            $this->settings_section
+            $this->option_group,
+            array(
+                'id' => 'build_hook_url'
+            )
         );
+    }
 
-        register_setting($this->option_group, 'build_hook_url');
+
+    // -------------------------------------------------
+    //
+    // Getters
+    //
+    // -------------------------------------------------
+
+    /**
+     * Returns the loaded status of the admin.
+     * 
+     * @return boolean
+     */
+    public function is_loaded() {
+        return $this->loaded;
     }
 
 
@@ -130,10 +152,15 @@ class Admin {
     ?>
         <div class="wrap">
         <h1 class="wp-heading-inline">Netlify Deploybot</h1>
-	        <form method="post">
+	        <form action="options.php" method="post">
 	        <?php
-	            settings_fields($this->option_group);
-	            do_settings_sections($this->menu_page_slug);
+                settings_errors();
+
+                settings_fields($this->option_group);
+                
+                // add_settings_field callbacks
+                do_settings_sections($this->menu_page_slug);
+
 	            submit_button(); 
 	        ?>          
 	        </form>
@@ -147,7 +174,7 @@ class Admin {
      * @return void
      */
     public function settings_markup() {
-        echo '<p>The settings</p>';
+        echo '';
     }
 
     /**
@@ -155,7 +182,51 @@ class Admin {
      * 
      * @return void
      */
-    public function build_hook_markup() {
-        echo sprintf('<input type="text" name="build_hook_url" id="build_hook_url", value="%s">', get_option('build_hook_url'));
+    public function field_markup($args) {
+        $options = get_option($this->option_group);
+        $field = $args['id'];
+        $value = $options[$field] ?? '';
+        $deploy_button = $value ? '<button>Deploy</button>' : '';
+        echo sprintf(
+            '<input type="url" class="regular-text" name="%1$s[%2$s]" id="%2$s" value="%3$s">%4$s',
+            $this->option_group,
+            $field,
+            $value,
+            $deploy_button
+        );
+    }
+
+
+    // -------------------------------------------------
+    //
+    // Validators
+    //
+    // -------------------------------------------------
+
+    /**
+     * Validate the settings fields.
+     * 
+     * @param array  $input  The input values.
+     * 
+     * @return array Filtered and sanitized input values.
+     */
+    public function validate_settings($input) {
+        if (empty($input)) {
+            return $input;
+        }
+
+        $new_input = false;
+        $options = get_option($this->option_group);
+
+        foreach ($input as $key => $val) {
+            if ($key === 'build_hook_url' && !empty($val) && filter_var($val, FILTER_VALIDATE_URL) === FALSE) {
+                add_settings_error('build_hook_url', 'invalid-url', 'You must supply a valid url.', 'error');
+                $new_input[$key] = $options['build_hook_url'];
+            } else {
+                $new_input[$key] = sanitize_text_field( $val );
+            }
+        }
+
+        return $new_input;
     }
 }
