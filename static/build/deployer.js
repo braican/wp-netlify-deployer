@@ -47,10 +47,10 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
             build_hook: _this.buildHook
           }).always(_this.completed.bind(_this)).done(function (resp) {
             if (!resp.success) {
-              return _this.error(resp);
+              _this.error(resp);
+            } else {
+              _this.success(resp.data);
             }
-
-            _this.$trigger.after("<span class=\"deploy-message deploy-message--success\">".concat(resp.data, "</span>"));
           }).fail(function (err) {
             return console.error(err);
           });
@@ -74,12 +74,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }, {
       key: "triggered",
       value: function triggered() {
-        if (this.$container.find('.deploy-message').length) {
-          this.$container.find('.deploy-message').remove();
-        }
-
         this.$trigger.prop('disabled', true);
-        this.$container.addClass('netlify-deploybot--loading');
+        this.$container.addClass('netlify-deploybot--loading').find('.deploy-message').remove();
       }
       /**
        * Handle a completed request, success or fail.
@@ -98,7 +94,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
        *
        * @param {mixed} err Data about the error.
        *
-       * @return int 0, since we've got an error.
+       * @return void
        */
 
     }, {
@@ -106,7 +102,20 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       value: function error(err) {
         console.error(err);
         this.$trigger.after('<span class="deploy-message deploy-message--error">Something went wrong with the deployment. Check the console for errors, or please try again later.</span>');
-        return 0;
+      }
+      /**
+       * Handle a successful POST request.
+       *
+       * @param {string} msg Success message
+       *
+       * @return void
+       */
+
+    }, {
+      key: "success",
+      value: function success(msg) {
+        this.$trigger.after("<span class=\"deploy-message deploy-message--success\">".concat(msg, "</span>"));
+        this.$container.find('.change-count').remove();
       }
     }]);
 

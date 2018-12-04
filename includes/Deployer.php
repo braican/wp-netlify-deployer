@@ -61,17 +61,18 @@ class Deployer {
         }
 
         $build_hook = $_POST['build_hook'];
-
-        // $respnse = $this->post($build_hook);
+        $respnse = $this->post($build_hook);
 
         // If the POST request from Netlify isn't empty, there is probably an error.
-        // if (!empty($response)) {
-        //     wp_send_json_error($response);
-        // }
+        if (!empty($response)) {
+            wp_send_json_error($response);
+        }
 
+        // Reset the changes counter.
         $admin = Admin::get_instance();
         $options = get_option($admin->option_group);
-        error_log(print_r($options, true));
+        $options['changes'] = 0;
+        update_option($admin->option_group, $options);
 
         wp_send_json_success('Deployment successfully triggered.');
     }
