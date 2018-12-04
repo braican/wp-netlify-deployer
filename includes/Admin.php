@@ -72,7 +72,9 @@ class Admin {
     public function trigger_hooks() {
         add_action('admin_menu', array($this, 'setup_menu_page'));
         add_action('admin_init', array($this, 'setup_menu_settings'));
+        add_action('save_post', array($this, 'increment_saves_since_deploy'));
     }
+
 
 
     /**
@@ -111,13 +113,42 @@ class Admin {
         add_settings_field(
             'build_hook_url',
             'Build Hook',
-            array($this, 'field_markup'),
+            array($this, 'build_hook_url_markup'),
             $this->menu_page_slug,
-            $this->option_group,
-            array(
-                'id' => 'build_hook_url'
-            )
+            $this->option_group
         );
+    }
+
+
+    /**
+     * When a page is saved, increment the number of saves since the last deploy.
+     * 
+     * @param int  $post_id  WP post being saved.
+     * 
+     * @return void
+     */
+    public function increment_saves_since_deploy($post_id) {
+        if (wp_is_post_revision($post_id) || empty($_POST)) {
+            return;
+        }
+
+        $options = get_option($this->option_group);
+
+        if (empty($options) || !isset($options['build_hook_url'])) {
+            return;
+        }
+
+        if (get_post_type($post_id) === 'page') {
+            if (isset($options['changes'])) {
+                $options['changes'] += 1;
+            } else {
+                $options['changes'] = 1;
+            }
+            
+            update_option($this->option_group, $options);
+        }
+
+        error_log(print_r(get_option($this->option_group), true));
     }
 
 
@@ -151,16 +182,12 @@ class Admin {
     public function menu_page_markup() {
     ?>
         <div class="wrap">
-        <h1 class="wp-heading-inline">Netlify Deploybot</h1>
+            <h1 class="wp-heading-inline">Netlify Deploybot</h1>
 	        <form action="options.php" method="post">
 	        <?php
                 settings_errors();
-
                 settings_fields($this->option_group);
-                
-                // add_settings_field callbacks
                 do_settings_sections($this->menu_page_slug);
-
 	            submit_button(); 
 	        ?>          
 	        </form>
@@ -178,21 +205,30 @@ class Admin {
     }
 
     /**
-     * Creates the markup for the admin page.
+     * Creates the markup for the `build_hook_url` field.
      * 
      * @return void
      */
-    public function field_markup($args) {
+    public function build_hook_url_markup() {
         $options = get_option($this->option_group);
-        $field = $args['id'];
-        $value = $options[$field] ?? '';
+        $value = $options['build_hook_url'] ?? '';
+        $saves = isset($options['changes']) && $options['changes'] > 0 ? "{$options['changes']} saves since last deployment." : '';
         $deploy_button = $value ? '<button>Deploy</button>' : '';
-        echo sprintf(
-            '<input type="url" class="regular-text" name="%1$s[%2$s]" id="%2$s" value="%3$s">%4$s',
-            $this->option_group,
-            $field,
-            $value,
+        
+        error_log(print_r($options, true));
+
+        $deploy_actions = sprintf(
+            '<div>%s%s</div>',
+            $saves,
             $deploy_button
+        );
+
+        echo sprintf(
+            '<div><input type="url" class="regular-text" name="%1$s[%2$s]" id="%2$s" value="%3$s">%4$s</div>',
+            $this->option_group,
+            'build_hook_url',
+            $value,
+            $deploy_actions
         );
     }
 
