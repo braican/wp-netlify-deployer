@@ -10,7 +10,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Netlify Deployer
- * Description:       Trigger Netlify deploys with ease.
+ * Description:       Trigger Netlify deploys with ease from WordPress.
  * Version:           0.0.1
  * Author:            Nick Braica
  * Author URI:        https://www.braican.com
