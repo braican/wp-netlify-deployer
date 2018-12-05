@@ -2,7 +2,7 @@
   class Deployer {
     constructor(trigger) {
       this.$trigger = $(trigger);
-      this.$container = this.$trigger.closest('.js-netlify-deploybot-actions');
+      this.$container = this.$trigger.closest('.js-netlify-deployer-actions');
       this.$buildHookInput = this.$container.find('#build_hook_url');
       this.buildHook = this.$buildHookInput.val();
       this.buildHookUnsaved = false;
@@ -39,7 +39,7 @@
           .fail(err => console.error(err));
       });
 
-      this.$buildHookInput.on('keypress', event => {
+      this.$buildHookInput.on('keypress', () => {
         if (!this.buildHookUnsaved) {
           this.$trigger
             .hide()
@@ -60,7 +60,7 @@
     triggered() {
       this.$trigger.prop('disabled', true);
       this.$container
-        .addClass('netlify-deploybot--loading')
+        .addClass('netlify-deployer--loading')
         .find('.deploy-message')
         .remove();
     }
@@ -72,7 +72,7 @@
      */
     completed() {
       this.$trigger.prop('disabled', false);
-      this.$container.removeClass('netlify-deploybot--loading');
+      this.$container.removeClass('netlify-deployer--loading');
     }
 
     /**

@@ -1,28 +1,28 @@
 <?php
 /**
- * Netlify Deploybot
+ * Netlify Deployer
  *
- * @package   NetlifyDeploybot\Admin
+ * @package   NetlifyDeployer\Admin
  * @author    Nick Braica
  * @license   GPL-2.0+
  * @link      https://www.braican.com
  * @copyright 2018 Nick Braica
  */
 
-namespace NetlifyDeploybot;
+namespace NetlifyDeployer;
 
 class Deployer {
     /**
      * The unique instance of the Deployer class.
      * 
-     * @var NetlifyDeploybot\Deployer
+     * @var NetlifyDeployer\Deployer
      */
     private static $instance;
 
     /**
      * Gets the instance of the class.
      * 
-     * @return NetlifyDeploybot\Deployer
+     * @return NetlifyDeployer\Deployer
      */
     public static function get_instance() {
         if (null === self::$instance) {

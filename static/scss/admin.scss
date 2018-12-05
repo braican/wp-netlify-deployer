@@ -1,4 +1,4 @@
-.netlify-deploybot {
+.netlify-deployer {
   .change-count {
     font-style: italic;
   }
@@ -54,7 +54,7 @@
 // --------------------------------------------------------------
 // loader
 // --------------------------------------------------------------
-.netlify-deploybot-loader {
+.netlify-deployer-loader {
   position: relative;
   display: inline-block;
   margin-left: 20px;
@@ -85,18 +85,18 @@
     animation-delay: 0.8s;
   }
 
-  .netlify-deploybot--loading &,
-  .netlify-deploybot--loading &::before,
-  .netlify-deploybot--loading &::after {
+  .netlify-deployer--loading &,
+  .netlify-deployer--loading &::before,
+  .netlify-deployer--loading &::after {
     animation: 1.2s infinite alternate loading;
   }
-  .netlify-deploybot--loading &::before {
+  .netlify-deployer--loading &::before {
     animation-delay: 0.4s;
   }
-  .netlify-deploybot--loading &::after {
+  .netlify-deployer--loading &::after {
     animation-delay: 0.8s;
   }
-  .netlify-deploybot--loading & {
+  .netlify-deployer--loading & {
     transition: opacity 1s;
     opacity: 1;
   }
