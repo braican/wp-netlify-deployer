@@ -14,7 +14,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       _classCallCheck(this, Deployer);
 
       this.$trigger = $(trigger);
-      this.$container = this.$trigger.closest('.js-netlify-deploybot-actions');
+      this.$container = this.$trigger.closest('.js-netlify-deployer-actions');
       this.$buildHookInput = this.$container.find('#build_hook_url');
       this.buildHook = this.$buildHookInput.val();
       this.buildHookUnsaved = false;
@@ -55,7 +55,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
             return console.error(err);
           });
         });
-        this.$buildHookInput.on('keypress', function (event) {
+        this.$buildHookInput.on('keypress', function () {
           if (!_this.buildHookUnsaved) {
             _this.$trigger.hide().after('<span class="unsaved-build-hook">Save this build hook url to deploy to it.</span>');
 
@@ -75,7 +75,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       key: "triggered",
       value: function triggered() {
         this.$trigger.prop('disabled', true);
-        this.$container.addClass('netlify-deploybot--loading').find('.deploy-message').remove();
+        this.$container.addClass('netlify-deployer--loading').find('.deploy-message').remove();
       }
       /**
        * Handle a completed request, success or fail.
@@ -87,7 +87,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       key: "completed",
       value: function completed() {
         this.$trigger.prop('disabled', false);
-        this.$container.removeClass('netlify-deploybot--loading');
+        this.$container.removeClass('netlify-deployer--loading');
       }
       /**
        * Handle an error from the request.
