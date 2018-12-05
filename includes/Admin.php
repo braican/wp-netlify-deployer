@@ -2,9 +2,9 @@
 /**
  * Netlify Deployer
  *
- * @package   NetlifyDeployer\Admin
+ * @package   NetlifyDeployer
  * @author    Nick Braica
- * @license   GPL-2.0+
+ * @license   MIT License
  * @link      https://www.braican.com
  * @copyright 2018 Nick Braica
  */

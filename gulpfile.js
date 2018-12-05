@@ -38,3 +38,4 @@ gulp.task('watch', () => {
 });
 
 gulp.task('default', ['watch']);
+gulp.task('build', ['sass', 'js']);

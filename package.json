@@ -5,12 +5,16 @@
   "directories": {
     "lib": "lib"
   },
+  "scripts": {
+    "dev": "gulp watch",
+    "build": "gulp build"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/braican/netlify-deploybot.git"
   },
   "author": "Nick Braica <https://www.braican.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/braican/netlify-deploybot/issues"
   },

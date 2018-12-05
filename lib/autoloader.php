@@ -2,10 +2,10 @@
 /**
  * Automatically loads the specified file.
  *
- * @package NetlifyDeploybot\Lib
+ * @package NetlifyDeployer\Lib
  */
 
-namespace NetlifyDeploybot\Lib;
+namespace NetlifyDeployer\Lib;
 
 /**
  * Automatically loads the specified file.
@@ -13,7 +13,7 @@ namespace NetlifyDeploybot\Lib;
  * Examines the fully qualified class name, separates it into components, then creates
  * a string that represents where the file is loaded on disk.
  *
- * @package NetlifyDeploybot\Lib
+ * @package NetlifyDeployer\Lib
  */
 spl_autoload_register(function( $filename ) {
 	// First, separate the components of the incoming file.

@@ -4,7 +4,7 @@
  *
  * @package   NetlifyDeployer
  * @author    Nick Braica
- * @license   GPL-2.0+
+ * @license   MIT License
  * @link      https://www.braican.com
  * @copyright 2018 Nick Braica
  *
@@ -15,8 +15,8 @@
  * Author:            Nick Braica
  * Author URI:        https://www.braican.com
  * Text Domain:       netlify-deployer
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ * License:           MIT License
+ * License URI:       http://opensource.org/licenses/MIT
  * Domain Path:       /languages
  * GitHub Plugin URI: https://github.com/braican/netlify-deployer
  */
