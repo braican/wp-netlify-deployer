@@ -38,6 +38,17 @@ class Admin {
 
 
     /**
+     * List of whitelisted post types that increment the undeployed changes counter on save.
+     * 
+     * @var array
+     */
+    private $incrementable_types = array(
+        'post',
+        'page'
+    );
+
+
+    /**
      * Gets the instance of the class.
      * 
      * @return NetlifyDeployer\Admin
@@ -153,20 +164,19 @@ class Admin {
         }
 
         $options = get_option($this->option_group);
-
-        if (empty($options) || !isset($options['build_hook_url'])) {
+        $post_type = get_post_type($post_id);
+        
+        if (empty($options) || !isset($options['build_hook_url']) || !$this->type_increment_saves($post_type)) {
             return;
         }
 
-        if (get_post_type($post_id) === 'page') {
-            if (isset($options['changes'])) {
-                $options['changes'] += 1;
-            } else {
-                $options['changes'] = 1;
-            }
-            
-            update_option($this->option_group, $options);
+        if (isset($options['undeployed_changes'])) {
+            $options['undeployed_changes'] += 1;
+        } else {
+            $options['undeployed_changes'] = 1;
         }
+        
+        update_option($this->option_group, $options);
     }
 
 
@@ -215,12 +225,15 @@ class Admin {
     public function build_hook_url_markup() {
         $options = get_option($this->option_group);
         $value = $options['build_hook_url'] ?? '';
-        $saves = isset($options['changes']) && $options['changes'] > 0 ? "<p class='change-count'>{$options['changes']} saves since last deployment.</p>" : '';
+        $undeployed_changes = $options['undeployed_changes'] ?? 0;
+
+        $save_label = $undeployed_changes == 1 ? 'save' : 'saves';
+        $changes_label = $undeployed_changes > 0 ? "<p class='change-count'>$undeployed_changes $save_label since last deployment.</p>" : '';
         $deploy_button = $value ? '<button class="js-deployer deployer">Deploy</button><span class="netlify-deployer-loader"></span>' : '';
 
         $deploy_actions = sprintf(
             '<div>%s%s</div>',
-            $saves,
+            $changes_label,
             $deploy_button
         );
 
@@ -265,5 +278,23 @@ class Admin {
         }
 
         return $new_input;
+    }
+
+
+    // -------------------------------------------------
+    //
+    // Util
+    //
+    // -------------------------------------------------
+
+    /**
+     * Checks to see if a save of the given post type should increment the undeployed changes.
+     * 
+     * @param string  $post_type  The content type that should be checked.
+     * 
+     * @return boolean True if the post type should increment, false if not.
+     */
+    private function type_increment_saves($post_type) {
+        return in_array($post_type, $this->incrementable_types);
     }
 }
