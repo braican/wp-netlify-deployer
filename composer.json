@@ -1,0 +1,14 @@
+{
+  "name": "braican/netlify-deployer",
+  "version": "1.0.0",
+  "description": "Trigger deployments to a Netlify project with ease.",
+  "keywords": [
+    "wordpress-plugin",
+    "wordpress"
+  ],
+  "license": "MIT",
+  "type": "wordpress-plugin",
+  "require": {
+    "php": "^7.0.0"
+  }
+}
