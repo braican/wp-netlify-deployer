@@ -43,7 +43,7 @@ Made by [Nick Braica](https://www.braican.com), who would be happy to talk to yo
 
 ## Changelog
 
-### 0.0.1
+### 1.0.0
 12/5/2018
 
-* Initial public beta release.
+* Initial public release.

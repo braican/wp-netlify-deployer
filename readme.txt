@@ -25,6 +25,6 @@ Once a build hook url has been added to the plugin's settings page, a "Deploy" b
 
 == Changelog ==
 
-= 0.0.1 =
+= 1.0.0 =
 **Welcome to the world**
-- Initial public beta relase.
+- Initial public relase.

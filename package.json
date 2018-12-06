@@ -1,6 +1,6 @@
 {
   "name": "netlify-deployer",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Trigger deployments to a Netlify project with ease.",
   "directories": {
     "lib": "lib"
