@@ -8,10 +8,6 @@ notifications:
     on_success: never
     on_failure: change
 
-branches:
-  only:
-    - master
-
 cache:
   directories:
     - $HOME/.composer/cache
@@ -19,7 +15,7 @@ cache:
 matrix:
   include:
     - php: 7.2
-      eng: WP_VERSION=latest
+      env: WP_VERSION=latest
     - php: 7.1
       env: WP_VERSION=latest
     - php: 7.0
