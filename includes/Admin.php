@@ -159,7 +159,7 @@ class Admin {
      * @return void
      */
     public function increment_saves_since_deploy($post_id) {
-        if (wp_is_post_revision($post_id) || empty($_POST)) {
+        if (wp_is_post_revision($post_id) || !empty($_POST)) {
             return;
         }
 

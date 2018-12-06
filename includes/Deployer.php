@@ -49,11 +49,10 @@ class Deployer {
         add_action('wp_ajax_trigger_deploy', array($this, 'trigger_deploy'));
     }
 
-
     /**
      * Trigger a deploy.
      * 
-     * @return void
+     * @return array
      */
     public function trigger_deploy() {
         if (!isset($_POST['build_hook'])) {
@@ -61,7 +60,7 @@ class Deployer {
         }
 
         $build_hook = $_POST['build_hook'];
-        $respnse = $this->post($build_hook);
+        $response = $this->post($build_hook);
 
         // If the POST request from Netlify isn't empty, there is probably an error.
         if (!empty($response)) {
@@ -71,7 +70,7 @@ class Deployer {
         // Reset the changes counter.
         $admin = Admin::get_instance();
         $options = get_option($admin->option_group);
-        $options['changes'] = 0;
+        $options['undeployed_changes'] = 0;
         update_option($admin->option_group, $options);
 
         wp_send_json_success('Deployment successfully triggered.');
