@@ -6,7 +6,7 @@
  * @author    Nick Braica
  * @license   MIT License
  * @link      https://www.braican.com
- * @copyright 2018 Nick Braica
+ * @copyright 2019 Nick Braica
  *
  * @wordpress-plugin
  * Plugin Name:       Netlify Deployer
