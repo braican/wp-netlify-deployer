@@ -317,7 +317,6 @@ class Admin {
 		$value     = $options[ $args['key'] ] ?? '';
 		$help_text = isset( $args['help_text'] ) ? '<p class="description">' . $args['help_text'] . '</p>' : '';
 
-
 		echo sprintf(
 			'<input type="text" class="regular-text" name="%1$s[%2$s]" id="%2$s" value="%3$s">%4$s',
 			$this->netlify_group,

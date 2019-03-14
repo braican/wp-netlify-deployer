@@ -17,12 +17,12 @@ class NetlifyDeployer_Admin_Test extends \WP_UnitTestCase {
 	}
 
 	public function test_admin_keys() {
-		$this->assertEquals('deployer_settings', $this->admin->option_group);
+		$this->assertEquals('deployer_settings', $this->admin->webhook_group);
 	}
 
 	public function test_increment_save_on_creation_no_previous_undeployed_changes() {
 		update_option(
-			$this->admin->option_group,
+			$this->admin->webhook_group,
 			array(
 				'build_hook_url' => 'https://google.com',
 			)
@@ -34,7 +34,7 @@ class NetlifyDeployer_Admin_Test extends \WP_UnitTestCase {
 			)
 		);
 
-		$options = get_option($this->admin->option_group);
+		$options = get_option($this->admin->webhook_group);
 
 		$this->assertEquals(
 			array(
@@ -47,7 +47,7 @@ class NetlifyDeployer_Admin_Test extends \WP_UnitTestCase {
 
 	public function test_increment_save_on_creation_existing_undeployed_changes() {
 		update_option(
-			$this->admin->option_group,
+			$this->admin->webhook_group,
 			array(
 				'build_hook_url'     => 'https://google.com',
 				'undeployed_changes' => 12,
@@ -60,7 +60,7 @@ class NetlifyDeployer_Admin_Test extends \WP_UnitTestCase {
 			)
 		);
 
-		$options = get_option($this->admin->option_group);
+		$options = get_option($this->admin->webhook_group);
 
 		$this->assertEquals(
 			array(
@@ -73,7 +73,7 @@ class NetlifyDeployer_Admin_Test extends \WP_UnitTestCase {
 
 	public function test_increment_save_on_edit_no_previous_undeployed_changes() {
 		update_option(
-			$this->admin->option_group,
+			$this->admin->webhook_group,
 			array(
 				'build_hook_url' => 'https://google.com',
 			)
@@ -92,7 +92,7 @@ class NetlifyDeployer_Admin_Test extends \WP_UnitTestCase {
 			)
 		);
 
-		$options = get_option($this->admin->option_group);
+		$options = get_option($this->admin->webhook_group);
 
 		$this->assertEquals(
 			array(
@@ -105,7 +105,7 @@ class NetlifyDeployer_Admin_Test extends \WP_UnitTestCase {
 
 	public function test_increment_save_on_edit_existing_undeployed_changes() {
 		update_option(
-			$this->admin->option_group,
+			$this->admin->webhook_group,
 			array(
 				'build_hook_url'     => 'https://google.com',
 				'undeployed_changes' => 49,
@@ -125,7 +125,7 @@ class NetlifyDeployer_Admin_Test extends \WP_UnitTestCase {
 			)
 		);
 
-		$options = get_option($this->admin->option_group);
+		$options = get_option($this->admin->webhook_group);
 
 		$this->assertEquals(
 			array(

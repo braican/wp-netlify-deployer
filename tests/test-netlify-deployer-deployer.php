@@ -48,7 +48,7 @@ class NetlifyDeployer_Deployer_Test extends WP_Ajax_UnitTestCase {
 		$this->assertEquals('Deployment successfully triggered.', $response->data);
 
 		// Assert that the `undeployed_changes` setting was reset.
-		$options = get_option($this->admin->option_group);
+		$options = get_option($this->admin->webhook_group);
 		$this->assertEquals(0, $options['undeployed_changes']);
 
 	}
