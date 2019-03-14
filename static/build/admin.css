@@ -26,18 +26,25 @@
   margin-top: 1em;
   color: #cc0000; }
 
-.netlify-deployer .deploy-message {
+.netlify-deployer .deploy-trigger-message {
   margin-left: 20px; }
-  .netlify-deployer .deploy-message--error {
+  .netlify-deployer .deploy-trigger-message--error {
     color: #cc0000; }
-  .netlify-deployer .deploy-message--success {
-    color: #008040;
-    font-weight: bold; }
+
+.netlify-deployer .build-status {
+  margin-top: 1em;
+  color: #00ad9f;
+  font-weight: bold; }
+  .netlify-deployer .build-status p + p {
+    margin-top: 0.5em; }
+  .netlify-deployer .build-status--error {
+    color: #cc0000; }
 
 .netlify-deployer-loader {
   position: relative;
   display: inline-block;
   margin-left: 20px;
+  margin-right: 60px;
   opacity: 0; }
   .netlify-deployer-loader, .netlify-deployer-loader:before, .netlify-deployer-loader:after {
     width: 8px;
@@ -52,9 +59,7 @@
   .netlify-deployer-loader:before {
     left: 14px; }
   .netlify-deployer-loader:after {
-    left: 28px;
-    -webkit-animation-delay: 0.8s;
-            animation-delay: 0.8s; }
+    left: 28px; }
   .netlify-deployer--loading .netlify-deployer-loader,
   .netlify-deployer--loading .netlify-deployer-loader:before,
   .netlify-deployer--loading .netlify-deployer-loader:after {

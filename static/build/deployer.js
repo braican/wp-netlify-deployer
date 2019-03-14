@@ -15,9 +15,16 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
       this.$trigger = $(trigger);
       this.$container = this.$trigger.closest('.js-netlify-deployer-actions');
-      this.$buildHookInput = this.$container.find('#build_hook_url');
+      this.$buildHookInput = this.$container.find('.js-deploy-hook-string');
       this.buildHook = this.$buildHookInput.val();
       this.buildHookUnsaved = false;
+      this.ajaxurl = '/wp-admin/admin-ajax.php';
+      this.buildCheckInterval = null;
+      this.netlifyApi = 'https://api.netlify.com/api/v1/sites/';
+      this.siteId = '9d67db46-2f61-401d-b8d5-f6af54bf0193';
+      this.accessToken = 'fdc5d8572fe95f66bdcb6cb6a0ea9b8ff373f0fbc48ef418539b25078dbd236c';
+      this.buildCheckEndpoint = "".concat(this.netlifyApi).concat(this.siteId, "/deploys?access_token=").concat(this.accessToken);
+      this.buildChecks = 0;
 
       if (this.buildHook) {
         this.init();
@@ -42,17 +49,22 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
           _this.triggered();
 
-          $.post(ajaxurl, {
+          $.post(_this.ajaxurl, {
             action: 'trigger_deploy',
             build_hook: _this.buildHook
-          }).always(_this.completed.bind(_this)).done(function (resp) {
+          }).done(function (resp) {
             if (!resp.success) {
-              _this.error(resp);
-            } else {
-              _this.success(resp.data);
+              _this.completed();
+
+              return _this.error(resp);
             }
+
+            _this.$container.find('.change-count').remove(); // this.buildCheckInterval = setInterval(this.checkBuildStatus.bind(this), 10000);
+
           }).fail(function (err) {
-            return console.error(err);
+            _this.completed();
+
+            console.error(err);
           });
         });
         this.$buildHookInput.on('keypress', function () {
@@ -78,7 +90,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         this.$container.addClass('netlify-deployer--loading').find('.deploy-message').remove();
       }
       /**
-       * Handle a completed request, success or fail.
+       * Handle a completed request to build, and get a final status from Netlify.
        *
        * @return void
        */
@@ -101,21 +113,64 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       key: "error",
       value: function error(err) {
         console.error(err);
-        this.$trigger.after('<span class="deploy-message deploy-message--error">Something went wrong with the deployment. Check the console for errors, or please try again later.</span>');
+        this.$trigger.after('<span class="deploy-trigger-message deploy-trigger-message--error">Something went wrong with the deployment. Check the console for errors, or please try again later.</span>');
       }
       /**
-       * Handle a successful POST request.
+       * Hits the Netlify API to check on the status of a build.
+       */
+
+    }, {
+      key: "checkBuildStatus",
+      value: function checkBuildStatus() {
+        var _this2 = this;
+
+        console.log('check the build');
+        var $statusDiv = this.$container.find('.js-netlify-build-status').removeClass('build-status--error');
+        $.ajax({
+          type: 'GET',
+          url: this.buildCheckEndpoint
+        }).done(function (data) {
+          if (!data || !data[0]) {
+            return _this2.buildStatusCheckFailure('No data was returned');
+          }
+
+          if ($statusDiv.length === 0) {
+            $statusDiv = $('<div class="js-netlify-build-status build-status" />').appendTo(_this2.$trigger.parent());
+          }
+
+          var state = data[0].state;
+          console.log(state);
+
+          if (state === 'ready') {
+            _this2.completed();
+
+            clearInterval(_this2.buildCheckInterval);
+            $statusDiv.html('The build has succeeded!');
+          } else if (state === 'error') {
+            _this2.completed();
+
+            clearInterval(_this2.buildCheckInterval);
+            $statusDiv.addClass('build-status--error').html("\n              <p>There was a problem with the build.</p>\n              <p>Check the console for error messages, or head to Netify to see what went wrong and to try the build again.</p>\n              ");
+            console.error(data[0]);
+          } else {
+            $statusDiv.html('Building...');
+          }
+        }).fail(this.buildStatusCheckFailure.bind(this));
+      }
+      /**
+       * Indicates a failure to get the proper build status data. Outputs error messaging.
        *
-       * @param {string} msg Success message
+       * @param {mixed} error The error data.
        *
        * @return void
        */
 
     }, {
-      key: "success",
-      value: function success(msg) {
-        this.$trigger.after("<span class=\"deploy-message deploy-message--success\">".concat(msg, "</span>"));
-        this.$container.find('.change-count').remove();
+      key: "buildStatusCheckFailure",
+      value: function buildStatusCheckFailure(error) {
+        clearInterval(this.buildCheckInterval);
+        console.error('There was a problem getting the Netlify build status. Please log in to Netlify to check the status of this build.');
+        console.error(error);
       }
     }]);
 
@@ -127,4 +182,4 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       return new Deployer(btn);
     });
   });
-})(jQuery);
+})(window.jQuery);
