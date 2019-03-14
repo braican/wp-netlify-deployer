@@ -152,7 +152,8 @@ class Admin {
 			'Build Hook',
 			array( $this, 'build_hook_url_markup' ),
 			$this->menu_page_slug,
-			$this->option_group
+			$this->option_group,
+			array( 'key' => 'build_hook_url' )
 		);
 
 		add_settings_field(
@@ -160,7 +161,8 @@ class Admin {
 			'Build Hook - Staging',
 			array( $this, 'build_hook_url_markup' ),
 			$this->menu_page_slug,
-			$this->option_group
+			$this->option_group,
+			array( 'key' => 'build_hook_url_staging' )
 		);
 	}
 
@@ -234,11 +236,13 @@ class Admin {
 	/**
 	 * Creates the markup for the `build_hook_url` field.
 	 *
+	 * @param array $args Object containing the key for the option field that should be rendered.
+	 *
 	 * @return void
 	 */
-	public function build_hook_url_markup() {
+	public function build_hook_url_markup( $args ) {
 		$options            = get_option( $this->option_group );
-		$value              = $options['build_hook_url'] ?? '';
+		$value              = $options[ $args['key'] ] ?? '';
 		$undeployed_changes = $options['undeployed_changes'] ?? 0;
 
 		$save_label    = 1 == $undeployed_changes ? 'save' : 'saves';
@@ -252,9 +256,9 @@ class Admin {
 		);
 
 		echo sprintf(
-			'<div class="js-netlify-deployer-actions"><input type="url" class="regular-text" name="%1$s[%2$s]" id="%2$s" value="%3$s">%4$s</div>',
+			'<div class="js-netlify-deployer-actions"><input type="url" class="regular-text js-deploy-hook-string" name="%1$s[%2$s]" id="%2$s" value="%3$s">%4$s</div>',
 			$this->option_group,
-			'build_hook_url',
+			$args['key'],
 			$value,
 			$deploy_actions
 		);
