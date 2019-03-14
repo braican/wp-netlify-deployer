@@ -10,30 +10,25 @@
     border-radius: 4px;
     padding: 8px 18px;
     margin-top: 1em;
-    border-width: 1px;
-    border-style: solid;
-    background-color: #00b359;
-    color: #fff;
+    background-color: #00ad9f;
+    color: #ffffff;
     font-weight: bold;
     transition: all 0.2s;
 
     &:not(:disabled):hover {
-      background-color: #00cc66;
-    }
-    &:not(:disabled):active {
-      background-color: #008040;
+      background-color: darken(#00ad9f, 4%);
     }
 
     &:disabled {
       cursor: default;
-      background-color: #ccc;
+      background-color: #cccccc;
     }
   }
 
   .unsaved-build-hook {
     display: block;
     margin-top: 1em;
-    color: #c00;
+    color: #cc0000;
   }
 
   // --------------------------------------------------------------
@@ -41,9 +36,11 @@
   // --------------------------------------------------------------
   .deploy-message {
     margin-left: 20px;
+
     &--error {
-      color: #c00;
+      color: #cc0000;
     }
+
     &--success {
       color: #008040;
       font-weight: bold;
@@ -61,41 +58,45 @@
   opacity: 0;
 
   &,
-  &::before,
-  &::after {
+  &:before,
+  &:after {
     width: 8px;
     height: 8px;
-    background-color: #aaa;
+    background-color: #aaaaaa;
     border-radius: 50%;
   }
 
-  &::before,
-  &::after {
+  &:before,
+  &:after {
     content: '';
     display: block;
     position: absolute;
     top: 0;
   }
 
-  &::before {
+  &:before {
     left: 14px;
   }
-  &::after {
+
+  &:after {
     left: 28px;
     animation-delay: 0.8s;
   }
 
   .netlify-deployer--loading &,
-  .netlify-deployer--loading &::before,
-  .netlify-deployer--loading &::after {
+  .netlify-deployer--loading &:before,
+  .netlify-deployer--loading &:after {
     animation: 1.2s infinite alternate loading;
   }
-  .netlify-deployer--loading &::before {
+
+  .netlify-deployer--loading &:before {
     animation-delay: 0.4s;
   }
-  .netlify-deployer--loading &::after {
+
+  .netlify-deployer--loading &:after {
     animation-delay: 0.8s;
   }
+
   .netlify-deployer--loading & {
     transition: opacity 1s;
     opacity: 1;
@@ -104,8 +105,9 @@
 
 @keyframes loading {
   from {
-    background-color: #aaa;
+    background-color: #aaaaaa;
   }
+
   to {
     background-color: #f1f1f1;
   }

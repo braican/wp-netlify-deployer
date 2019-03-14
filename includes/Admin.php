@@ -154,6 +154,14 @@ class Admin {
 			$this->menu_page_slug,
 			$this->option_group
 		);
+
+		add_settings_field(
+			'build_hook_url_staging',
+			'Build Hook - Staging',
+			array( $this, 'build_hook_url_markup' ),
+			$this->menu_page_slug,
+			$this->option_group
+		);
 	}
 
 
@@ -207,7 +215,7 @@ class Admin {
 				settings_errors();
 				settings_fields( $this->option_group );
 				do_settings_sections( $this->menu_page_slug );
-				submit_button( 'Save Build Hook' );
+				submit_button( 'Save Build Hooks' );
 			?>
 			</form>
 		</div>
@@ -220,7 +228,7 @@ class Admin {
 	 * @return void
 	 */
 	public function settings_markup() {
-		echo '<p>Netlify deployments made simple. Set up a build hook here to trigger a deploy to your Netlify site.</p>';
+		echo '<p>Netlify deployments made simple. Set up build hooks here to trigger a deployment to your Netlify site.</p>';
 	}
 
 	/**

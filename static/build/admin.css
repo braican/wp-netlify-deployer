@@ -10,30 +10,26 @@
   border-radius: 4px;
   padding: 8px 18px;
   margin-top: 1em;
-  border-width: 1px;
-  border-style: solid;
-  background-color: #00b359;
-  color: #fff;
+  background-color: #00ad9f;
+  color: #ffffff;
   font-weight: bold;
   -webkit-transition: all 0.2s;
   transition: all 0.2s; }
   .netlify-deployer .deployer:not(:disabled):hover {
-    background-color: #00cc66; }
-  .netlify-deployer .deployer:not(:disabled):active {
-    background-color: #008040; }
+    background-color: #00998c; }
   .netlify-deployer .deployer:disabled {
     cursor: default;
-    background-color: #ccc; }
+    background-color: #cccccc; }
 
 .netlify-deployer .unsaved-build-hook {
   display: block;
   margin-top: 1em;
-  color: #c00; }
+  color: #cc0000; }
 
 .netlify-deployer .deploy-message {
   margin-left: 20px; }
   .netlify-deployer .deploy-message--error {
-    color: #c00; }
+    color: #cc0000; }
   .netlify-deployer .deploy-message--success {
     color: #008040;
     font-weight: bold; }
@@ -43,31 +39,31 @@
   display: inline-block;
   margin-left: 20px;
   opacity: 0; }
-  .netlify-deployer-loader, .netlify-deployer-loader::before, .netlify-deployer-loader::after {
+  .netlify-deployer-loader, .netlify-deployer-loader:before, .netlify-deployer-loader:after {
     width: 8px;
     height: 8px;
-    background-color: #aaa;
+    background-color: #aaaaaa;
     border-radius: 50%; }
-  .netlify-deployer-loader::before, .netlify-deployer-loader::after {
+  .netlify-deployer-loader:before, .netlify-deployer-loader:after {
     content: '';
     display: block;
     position: absolute;
     top: 0; }
-  .netlify-deployer-loader::before {
+  .netlify-deployer-loader:before {
     left: 14px; }
-  .netlify-deployer-loader::after {
+  .netlify-deployer-loader:after {
     left: 28px;
     -webkit-animation-delay: 0.8s;
             animation-delay: 0.8s; }
   .netlify-deployer--loading .netlify-deployer-loader,
-  .netlify-deployer--loading .netlify-deployer-loader::before,
-  .netlify-deployer--loading .netlify-deployer-loader::after {
+  .netlify-deployer--loading .netlify-deployer-loader:before,
+  .netlify-deployer--loading .netlify-deployer-loader:after {
     -webkit-animation: 1.2s infinite alternate loading;
             animation: 1.2s infinite alternate loading; }
-  .netlify-deployer--loading .netlify-deployer-loader::before {
+  .netlify-deployer--loading .netlify-deployer-loader:before {
     -webkit-animation-delay: 0.4s;
             animation-delay: 0.4s; }
-  .netlify-deployer--loading .netlify-deployer-loader::after {
+  .netlify-deployer--loading .netlify-deployer-loader:after {
     -webkit-animation-delay: 0.8s;
             animation-delay: 0.8s; }
   .netlify-deployer--loading .netlify-deployer-loader {
@@ -77,13 +73,13 @@
 
 @-webkit-keyframes loading {
   from {
-    background-color: #aaa; }
+    background-color: #aaaaaa; }
   to {
     background-color: #f1f1f1; } }
 
 @keyframes loading {
   from {
-    background-color: #aaa; }
+    background-color: #aaaaaa; }
   to {
     background-color: #f1f1f1; } }
 
