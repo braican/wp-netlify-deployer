@@ -17,6 +17,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       this.$container = this.$trigger.closest('.js-netlify-deployer-actions');
       this.$buildHookInput = this.$container.find('.js-deploy-hook-string');
       this.buildHook = this.$buildHookInput.val();
+      this.buildHookKey = this.$buildHookInput.attr('id');
       this.buildHookUnsaved = false;
       this.ajaxurl = '/wp-admin/admin-ajax.php';
 
@@ -76,7 +77,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       key: "triggered",
       value: function triggered() {
         this.$trigger.prop('disabled', true);
-        this.$container.addClass('netlify-deployer--loading').find('.deploy-message').remove();
+        this.$container.addClass('netlify-deployer--loading').find('.deploy-message, .deploy-message--alert').remove();
       }
       /**
        * Handle a completed request, success or fail.
@@ -115,7 +116,11 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }, {
       key: "success",
       value: function success(msg) {
-        this.$trigger.after("<span class=\"deploy-message deploy-message--success\">".concat(msg, "</span>"));
+        // Production builds will get a different message telling the user how to check the status of
+        //  the build.
+        var contextMessage = this.buildHookKey === 'build_hook_url' ? 'Refresh the page and reference the Deploy Status Badge below to check on the status of your build.' : 'Status checks for deployments to contexts other than production are currently unavailable. You can go to your project\'s Deploys page to confirm the status of this deployment.';
+        var message = "<span class=\"deploy-message deploy-message--success\">".concat(msg, "</span>");
+        this.$trigger.after(message).parent().append("<p class=\"deploy-message--alert\">".concat(contextMessage, "</p>"));
         this.$container.find('.change-count').remove();
       }
     }]);

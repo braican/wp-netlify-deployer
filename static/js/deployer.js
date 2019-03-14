@@ -5,6 +5,7 @@
       this.$container = this.$trigger.closest('.js-netlify-deployer-actions');
       this.$buildHookInput = this.$container.find('.js-deploy-hook-string');
       this.buildHook = this.$buildHookInput.val();
+      this.buildHookKey = this.$buildHookInput.attr('id');
       this.buildHookUnsaved = false;
 
       this.ajaxurl = '/wp-admin/admin-ajax.php';
@@ -63,7 +64,7 @@
       this.$trigger.prop('disabled', true);
       this.$container
         .addClass('netlify-deployer--loading')
-        .find('.deploy-message')
+        .find('.deploy-message, .deploy-message--alert')
         .remove();
     }
 
@@ -99,7 +100,19 @@
      * @return void
      */
     success(msg) {
-      this.$trigger.after(`<span class="deploy-message deploy-message--success">${msg}</span>`);
+      // Production builds will get a different message telling the user how to check the status of
+      //  the build.
+      const contextMessage =
+        this.buildHookKey === 'build_hook_url'
+          ? 'Refresh the page and reference the Deploy Status Badge below to check on the status of your build.'
+          : 'Status checks for deployments to contexts other than production are currently unavailable. You can go to your project\'s Deploys page to confirm the status of this deployment.';
+
+      const message = `<span class="deploy-message deploy-message--success">${msg}</span>`;
+
+      this.$trigger
+        .after(message)
+        .parent()
+        .append(`<p class="deploy-message--alert">${contextMessage}</p>`);
       this.$container.find('.change-count').remove();
     }
   }

@@ -1,3 +1,12 @@
+$c--green: #00ad9f;
+$c--red: #cc0000;
+$c--white: #ffffff;
+$c--gray-f1: #f1f1f1;
+$c--gray-a: #aaaaaa;
+$c--gray-c: #cccccc;
+
+$c-disabled: $c--gray-c;
+
 .netlify-deployer {
   .change-count {
     font-style: italic;
@@ -10,25 +19,25 @@
     border-radius: 4px;
     padding: 8px 18px;
     margin-top: 1em;
-    background-color: #00ad9f;
-    color: #ffffff;
+    background-color: $c--green;
+    color: $c--white;
     font-weight: bold;
     transition: all 0.2s;
 
     &:not(:disabled):hover {
-      background-color: darken(#00ad9f, 4%);
+      background-color: darken($c--green, 4%);
     }
 
     &:disabled {
       cursor: default;
-      background-color: #cccccc;
+      background-color: $c--gray-c;
     }
   }
 
   .unsaved-build-hook {
     display: block;
     margin-top: 1em;
-    color: #cc0000;
+    color: $c--red;
   }
 
   // --------------------------------------------------------------
@@ -38,12 +47,19 @@
     margin-left: 20px;
 
     &--error {
-      color: #cc0000;
+      color: $c--red;
     }
 
     &--success {
-      color: #008040;
+      color: $c--green;
       font-weight: bold;
+    }
+
+    &--alert {
+      margin-top: 1em;
+      padding: 20px;
+      border-left: 4px solid $c--gray-c;
+      background-color: lighten($c--gray-f1, 2%);
     }
   }
 }
@@ -62,7 +78,7 @@
   &:after {
     width: 8px;
     height: 8px;
-    background-color: #aaaaaa;
+    background-color: $c--gray-a;
     border-radius: 50%;
   }
 
@@ -105,10 +121,10 @@
 
 @keyframes loading {
   from {
-    background-color: #aaaaaa;
+    background-color: $c--gray-a;
   }
 
   to {
-    background-color: #f1f1f1;
+    background-color: $c--gray-f1;
   }
 }

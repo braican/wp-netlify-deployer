@@ -31,8 +31,13 @@
   .netlify-deployer .deploy-message--error {
     color: #cc0000; }
   .netlify-deployer .deploy-message--success {
-    color: #008040;
+    color: #00ad9f;
     font-weight: bold; }
+  .netlify-deployer .deploy-message--alert {
+    margin-top: 1em;
+    padding: 20px;
+    border-left: 4px solid #cccccc;
+    background-color: #f6f6f6; }
 
 .netlify-deployer-loader {
   position: relative;
