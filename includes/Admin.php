@@ -32,11 +32,33 @@ class Admin {
 
 
 	/**
-	 * The name of the settings section.
+	 * The name of the settings section for webhooks.
 	 *
 	 * @var string
 	 */
-	public $option_group = 'deployer_settings';
+	public $webhook_group = 'deployer_settings';
+
+
+	/**
+	 * The name of the settings section for Netlify settings.
+	 *
+	 * @var string
+	 */
+	public $netlify_group = 'deployer_netlify_settings';
+
+	/**
+	 * The name of the settings section for Netlify settings.
+	 *
+	 * @var array
+	 */
+	public $webhook_settings = array();
+
+	/**
+	 * The name of the settings section for Netlify settings.
+	 *
+	 * @var array
+	 */
+	public $netlify_settings = array();
 
 
 	/**
@@ -68,6 +90,10 @@ class Admin {
 	 */
 	private function __construct() {
 		if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
+			// Set up the data from the options table.
+			$this->webhook_settings = get_option( $this->webhook_group );
+			$this->netlify_settings = get_option( $this->netlify_group );
+
 			$this->trigger_hooks();
 		}
 	}
@@ -133,17 +159,27 @@ class Admin {
 	 */
 	public function setup_menu_settings() {
 		register_setting(
-			$this->option_group,
-			$this->option_group,
+			$this->webhook_group,
+			$this->webhook_group,
+			array(
+				'sanitize_callback' => array( $this, 'validate_settings' ),
+			)
+		);
+
+		register_setting(
+			$this->netlify_group,
+			$this->netlify_group,
 			array(
 				'sanitize_callback' => array( $this, 'validate_settings' ),
 			)
 		);
 
 		add_settings_section(
-			$this->option_group,
-			'Webhook Settings',
-			array( $this, 'settings_markup' ),
+			$this->webhook_group,
+			'Webhooks',
+			function() {
+				echo '<p>Use the following fields to add build hooks from Netlify that can be used to trigger a deployment to the respective environments.</p>';
+			},
 			$this->menu_page_slug
 		);
 
@@ -152,8 +188,11 @@ class Admin {
 			'Build Hook',
 			array( $this, 'build_hook_url_markup' ),
 			$this->menu_page_slug,
-			$this->option_group,
-			array( 'key' => 'build_hook_url' )
+			$this->webhook_group,
+			array(
+				'key'          => 'build_hook_url',
+				'status_badge' => true,
+			)
 		);
 
 		add_settings_field(
@@ -161,8 +200,45 @@ class Admin {
 			'Build Hook - Staging',
 			array( $this, 'build_hook_url_markup' ),
 			$this->menu_page_slug,
-			$this->option_group,
+			$this->webhook_group,
 			array( 'key' => 'build_hook_url_staging' )
+		);
+
+		/**
+		 * Netlify group.
+		 */
+
+		add_settings_section(
+			$this->netlify_group,
+			'Netlify Settings',
+			function() {
+				echo '';
+			},
+			$this->menu_page_slug
+		);
+
+		add_settings_field(
+			'netlify_site_id',
+			'Site ID',
+			array( $this, 'deployer_basic_text_field' ),
+			$this->menu_page_slug,
+			$this->netlify_group,
+			array(
+				'key'       => 'netlify_site_id',
+				'help_text' => 'This can be found in your Netlify project by going to the Settings > General page and finding the "API ID" value in the Site Information.',
+			)
+		);
+
+		add_settings_field(
+			'netlify_deploy_admin',
+			'Netlify Deployment Admin Link',
+			array( $this, 'deployer_basic_text_field' ),
+			$this->menu_page_slug,
+			$this->netlify_group,
+			array(
+				'key'       => 'netlify_deploy_admin',
+				'help_text' => 'This should be set to the link to the "Deploys" page in your Netlify project.',
+			)
 		);
 	}
 
@@ -179,7 +255,7 @@ class Admin {
 			return;
 		}
 
-		$options   = get_option( $this->option_group );
+		$options   = $this->webhook_settings;
 		$post_type = get_post_type( $post_id );
 
 		if ( empty( $options ) || ! isset( $options['build_hook_url'] ) || ! $this->type_increment_saves( $post_type ) ) {
@@ -192,7 +268,7 @@ class Admin {
 			$options['undeployed_changes'] = 1;
 		}
 
-		update_option( $this->option_group, $options );
+		update_option( $this->webhook_group, $options );
 	}
 
 
@@ -212,42 +288,81 @@ class Admin {
 		?>
 		<div class="wrap">
 			<h1 class="wp-heading-inline">Netlify Deployer</h1>
+			<p>Deployments to Netlify made simple.</p>
 			<form action="options.php" method="post" class="netlify-deployer">
 			<?php
 				settings_errors();
-				settings_fields( $this->option_group );
+				settings_fields( $this->webhook_group );
+				settings_fields( $this->netlify_group );
 				do_settings_sections( $this->menu_page_slug );
-				submit_button( 'Save Build Hooks' );
+				submit_button( 'Save' );
 			?>
 			</form>
 		</div>
 		<?php
 	}
 
+
 	/**
-	 * Creates the markup for the admin page.
+	 * Creates the markup for a simple text field.
+	 *
+	 * @param array $args Object containing some optional arguments for the text field.
+	 * @arg string $key
+	 * @arg string $help_text
 	 *
 	 * @return void
 	 */
-	public function settings_markup() {
-		echo '<p>Netlify deployments made simple. Set up build hooks here to trigger a deployment to your Netlify site.</p>';
+	public function deployer_basic_text_field( $args ) {
+		$options   = $this->netlify_settings;
+		$value     = $options[ $args['key'] ] ?? '';
+		$help_text = isset( $args['help_text'] ) ? '<p class="description">' . $args['help_text'] . '</p>' : '';
+
+
+		echo sprintf(
+			'<input type="text" class="regular-text" name="%1$s[%2$s]" id="%2$s" value="%3$s">%4$s',
+			$this->netlify_group,
+			$args['key'],
+			$value,
+			$help_text
+		);
 	}
+
 
 	/**
 	 * Creates the markup for the `build_hook_url` field.
 	 *
-	 * @param array $args Object containing the key for the option field that should be rendered.
+	 * @param array $args Object containing some optional arguments for the text field.
+	 * @arg string  $key
+	 * @arg boolean $status_badge
 	 *
 	 * @return void
 	 */
 	public function build_hook_url_markup( $args ) {
-		$options            = get_option( $this->option_group );
-		$value              = $options[ $args['key'] ] ?? '';
-		$undeployed_changes = $options['undeployed_changes'] ?? 0;
+		$value              = $this->webhook_settings[ $args['key'] ] ?? '';
+		$undeployed_changes = $this->webhook_settings['undeployed_changes'] ?? 0;
+		$save_label         = 1 == $undeployed_changes ? 'save' : 'saves';
 
-		$save_label    = 1 == $undeployed_changes ? 'save' : 'saves';
+		// Status badge.
+		$status_badge = '';
+
+		// Deploy actions.
 		$changes_label = $undeployed_changes > 0 ? "<p class='change-count'>$undeployed_changes $save_label since last deployment.</p>" : '';
 		$deploy_button = $value ? '<button class="js-deployer deployer">Deploy</button><span class="netlify-deployer-loader"></span>' : '';
+
+		if ( isset( $args['status_badge'] ) ) {
+			$status_badge = sprintf(
+				'<div style="margin-top: 1em"><p style="margin-bottom: .5em;">Current state of the latest production deploy:</p><a target="_blank" href="%2$s"><img src="%1$s"></a></div>',
+				$args['status_badge'],
+				'https://app.netlify.com/sites/indigo-technology/deploys'
+			);
+		}
+
+		$input_field = sprintf(
+			'<input type="url" class="regular-text js-deploy-hook-string" name="%1$s[%2$s]" id="%2$s" value="%3$s">',
+			$this->webhook_group,
+			$args['key'],
+			$value
+		);
 
 		$deploy_actions = sprintf(
 			'<div>%s%s</div>',
@@ -255,12 +370,29 @@ class Admin {
 			$deploy_button
 		);
 
+		if ( isset( $args['status_badge'] ) && $args['status_badge'] && $this->netlify_settings['netlify_site_id'] ) {
+			$site_id              = $this->netlify_settings['netlify_site_id'];
+			$deploy_admin_link    = $this->netlify_settings['netlify_deploy_admin'];
+			$status_badge_img_src = "https://api.netlify.com/api/v1/badges/$site_id/deploy-status";
+
+			$status_badge_img = sprintf( '<img src="%s">', $status_badge_img_src );
+
+			if ( $deploy_admin_link ) {
+				$status_badge_img = sprintf( '<a target="_blank" href="%s">%s</a>', $deploy_admin_link, $status_badge_img );
+			}
+
+			$status_badge = sprintf(
+				'<div><p style="margin: 1em 0 .5em;">%s</p>%s</div>',
+				'Current state of your latest production deploy:',
+				$status_badge_img
+			);
+		}
+
 		echo sprintf(
-			'<div class="js-netlify-deployer-actions"><input type="url" class="regular-text js-deploy-hook-string" name="%1$s[%2$s]" id="%2$s" value="%3$s">%4$s</div>',
-			$this->option_group,
-			$args['key'],
-			$value,
-			$deploy_actions
+			'<div class="js-netlify-deployer-actions">%1$s%2$s%3$s</div>',
+			$input_field,
+			$deploy_actions,
+			$status_badge
 		);
 	}
 
@@ -284,12 +416,15 @@ class Admin {
 		}
 
 		$new_input = false;
-		$options   = get_option( $this->option_group );
+		$options   = $this->webhook_settings;
 
 		foreach ( $input as $key => $val ) {
 			if ( 'build_hook_url' === $key && ! empty( $val ) && filter_var( $val, FILTER_VALIDATE_URL ) === false ) {
 				add_settings_error( 'build_hook_url', 'invalid-url', 'You must supply a valid url.', 'error' );
 				$new_input[ $key ] = $options['build_hook_url'];
+			} elseif ( 'build_hook_url_staging' === $key && ! empty( $val ) && filter_var( $val, FILTER_VALIDATE_URL ) === false ) {
+				add_settings_error( 'build_hook_url_staging', 'invalid-url', 'You must supply a valid url.', 'error' );
+				$new_input[ $key ] = $options['build_hook_url_staging'];
 			} else {
 				$new_input[ $key ] = sanitize_text_field( $val );
 			}

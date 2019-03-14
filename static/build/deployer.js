@@ -15,9 +15,10 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
       this.$trigger = $(trigger);
       this.$container = this.$trigger.closest('.js-netlify-deployer-actions');
-      this.$buildHookInput = this.$container.find('#build_hook_url');
+      this.$buildHookInput = this.$container.find('.js-deploy-hook-string');
       this.buildHook = this.$buildHookInput.val();
       this.buildHookUnsaved = false;
+      this.ajaxurl = '/wp-admin/admin-ajax.php';
 
       if (this.buildHook) {
         this.init();
@@ -42,7 +43,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
           _this.triggered();
 
-          $.post(ajaxurl, {
+          $.post(_this.ajaxurl, {
             action: 'trigger_deploy',
             build_hook: _this.buildHook
           }).always(_this.completed.bind(_this)).done(function (resp) {
@@ -127,4 +128,4 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       return new Deployer(btn);
     });
   });
-})(jQuery);
+})(window.jQuery);
