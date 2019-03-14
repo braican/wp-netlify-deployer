@@ -32,7 +32,6 @@ if ( ! defined( 'WPINC' ) ) {
  * CONSTANTS
  */
 
-
 // Define the plugin version.
 define( 'NETLIFY_DEPLOYER_VERSION', '0.0.1' );
 
